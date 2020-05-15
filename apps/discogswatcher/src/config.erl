@@ -21,3 +21,5 @@ to_tuple(PropList) ->
     MaxPrice = proplists:get_value("MaxPrice", PropList),
     Currency = proplists:get_value("Currency", PropList),
     {Title, Artist, MaxPrice, Currency}.
+
+%% Tests 
