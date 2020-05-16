@@ -1,25 +1,33 @@
 -module(config).
 
--export([parse/1]).
+-export([get_config/1, get_records/1]).
+
+get_config(FilePath) ->
+    Document = parse(FilePath),
+    Values = proplists:get_value("Config", Document),
+    to_config_tuple(Values).
+
+get_records(FilePath) ->
+    Document = parse(FilePath),
+    Values = proplists:get_value("Records", Document),
+    lists:map(fun(X) -> to_records_tuple(X) end, Values).
 
 parse(FilePath) ->
     Documents = get_documents(FilePath),
     [Document | _] = Documents,
-    [Mappings | _] = Document,
-    {_, Mapping} = Mappings,
-    extract(Mapping).
+    Document.
 
 get_documents(FilePath) ->
     yamerl_constr:file(FilePath, [{schema, json}]).
 
-extract(L) ->
-    lists:map(fun(X) -> to_tuple(X) end, L).
-
-to_tuple(PropList) ->
+to_records_tuple(PropList) ->
     Title = proplists:get_value("Title", PropList),
     Artist = proplists:get_value("Artist", PropList),
-    MaxPrice = proplists:get_value("MaxPrice", PropList),
-    Currency = proplists:get_value("Currency", PropList),
-    {Title, Artist, MaxPrice, Currency}.
+    Format = proplists:get_value("Format", PropList),
+    {Title, Artist, Format}.
+
+to_config_tuple(PropList) ->
+    Interval = proplists:get_value("DiscogsToken", PropList),
+    {Interval}.
 
 %% Tests 
