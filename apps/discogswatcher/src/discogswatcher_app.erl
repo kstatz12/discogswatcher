@@ -11,7 +11,7 @@
 
 start(_StartType, _StartArgs) ->
     application:start(yamerl),
-    application:start(hackney),
+    application:ensure_all_started(hackney),
     discogswatcher_sup:start_link().
 
 
