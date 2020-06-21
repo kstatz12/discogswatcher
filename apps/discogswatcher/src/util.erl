@@ -17,7 +17,6 @@ dedup_test() ->
     TestStrData = ["one", "two", "two", "three"],
     ["one", "two", "three"] = dedup(TestStrData).
 
-
 fmt_string_test() ->
     Args = [1, 2],
     Template = "~wtest~w",

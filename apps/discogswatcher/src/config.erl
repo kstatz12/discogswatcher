@@ -1,24 +1,22 @@
 -module(config).
+-include_lib("eunit/include/eunit.hrl").
 
--export([get_config/1, get_records/1]).
+-export([get_discogs_token/2, get_records/2]).
 
-get_config(FilePath) ->
-    Document = parse(FilePath),
+get_discogs_token(Parser, FilePath) ->
+    Document = parse(Parser, FilePath),
     Values = proplists:get_value("Config", Document),
-    to_config_tuple(Values).
+    proplists:get_value("DiscogsToken", Values).
 
-get_records(FilePath) ->
-    Document = parse(FilePath),
+get_records(Parser, FilePath) ->
+    Document = parse(Parser, FilePath),
     Values = proplists:get_value("Records", Document),
     lists:map(fun(X) -> to_records_tuple(X) end, Values).
 
-parse(FilePath) ->
-    Documents = get_documents(FilePath),
+parse(Parser, FilePath) ->
+    Documents = Parser(FilePath),
     [Document | _] = Documents,
     Document.
-
-get_documents(FilePath) ->
-    yamerl_constr:file(FilePath, [{schema, json}]).
 
 to_records_tuple(PropList) ->
     Title = proplists:get_value("Title", PropList),
@@ -26,8 +24,20 @@ to_records_tuple(PropList) ->
     Format = proplists:get_value("Format", PropList),
     {Title, Artist, Format}.
 
-to_config_tuple(PropList) ->
-    Interval = proplists:get_value("DiscogsToken", PropList),
-    {Interval}.
+%% Tests %%
+get_records_test() ->
+    [{"Dopesmoker","Sleep","LP"}] = get_records(fun test_parser/1, "").
 
-%% Tests 
+get_discogs_token_test() ->
+    "cqcypeeIsRZugzdXdkDthLGASGlObmCoxGRMANRZ" = get_discogs_token(fun test_parser/1, "").
+
+test_parser(_FilePath) ->
+    [[{"Config",
+       [{"DiscogsToken",
+         "cqcypeeIsRZugzdXdkDthLGASGlObmCoxGRMANRZ"}]},
+      {"Records",
+       [[{"Artist","Sleep"},
+         {"Title","Dopesmoker"},
+         {"Format","LP"}]]}]].
+
+
