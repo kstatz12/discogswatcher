@@ -5,7 +5,7 @@
 exec_get(Url) ->
     case hackney:request(get, Url,[], <<>>, [{pool, default}] ) of
         {error, _} ->
-            {error, nil};
+            {error, "Could Not Get URL"};
         {ok, _, _, Ref} -> 
             {ok, Body} = hackney:body(Ref),
             Document = parse_body(Body),
