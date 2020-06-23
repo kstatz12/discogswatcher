@@ -1,7 +1,6 @@
 -module(discogs).
 -include_lib("eunit/include/eunit.hrl").
 
-
 -export([get_releases_for_record/3]).
 
 %% Public API %%
